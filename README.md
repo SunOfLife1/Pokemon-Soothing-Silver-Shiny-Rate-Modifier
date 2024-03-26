@@ -1,0 +1,1 @@
+# Pokemon-Soothing-Silver-Shiny-Rate-Modifier
