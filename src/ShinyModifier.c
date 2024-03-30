@@ -7,6 +7,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <string.h>
 
 // If debug macro is 1, program will print more details
@@ -14,11 +15,57 @@
 // Offset of the shiny value in Soothing Silver v1.3.2
 #define OFFSET 0x558EB
 
+bool hasExtension(const char *filename, const char *ext)
+{
+    if (!filename || !ext)
+        return false;
+
+    const char *actualExt = strrchr(filename, '.');
+    if (!actualExt)
+        return false;
+
+    if (DEBUG)
+    {
+        printf("\nDEBUG - filename = %s\n", filename);
+        printf("DEBUG - ext = %s\n", ext);
+        printf("DEBUG - actualExt = %s\n", actualExt);
+    }
+
+    return !strncmp(actualExt, ext, strlen(ext));
+}
+
+bool fileExists(const char *filename)
+{
+    FILE *fp = fopen(filename, "rb");
+    if (fp == NULL)
+        return false;
+
+    fclose(fp);
+    return true;
+}
+
 int printCloseWindow()
 {
     printf("\nPress ENTER to close this window.\n");
     getchar();
     return 0;
+}
+
+bool promptToContinue(const char *msg)
+{
+    printf("\n%s ", msg);
+    while (true)
+    {
+        printf("Continue anyway? (Y/N)\n> ");
+
+        char input[256];
+        fgets(input, 256, stdin);
+
+        if (!strncasecmp(input, "Y", 1))
+            return true;
+        else if (!strncasecmp(input, "N", 1))
+            return false;
+    }
 }
 
 int main(int argc, char **argv)
@@ -42,10 +89,21 @@ int main(int argc, char **argv)
     }
 
     // Ask the user for the output filename
-    printf("\nEnter the name of the output file (NOTE: If a file already exists with that name it WILL be overriden)\n> ");
     char outFilename[256];
-    fgets(outFilename, 256, stdin);
-    outFilename[strcspn(outFilename, "\n")] = 0; // remove end of string newline
+    while (strlen(outFilename) == 0)
+    {
+        printf("Enter the name of the output file.\n> ");
+        fgets(outFilename, 256, stdin);
+        outFilename[strcspn(outFilename, "\n")] = 0; // remove end of string newline
+    }
+
+    // Check that file already exists
+    if (fileExists(outFilename) && !promptToContinue("Output file exists already."))
+        return printCloseWindow();
+
+    // Check that file extension is correct
+    if (!hasExtension(outFilename, ".nds") && !promptToContinue("Output filename does not end in \".nds\"."))
+        return printCloseWindow();
 
     if (DEBUG)
     {
