@@ -9,7 +9,7 @@ SRC := $(wildcard $(SRC_DIR)/*.c)
 OBJ := $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 
 CC := gcc
-CFLAGS := -Iinclude -std=c99 -pedantic -Wall -Wextra -Og
+CFLAGS := -Iinclude -std=c99 -pedantic -Wall -Wextra -O3
 LDFLAGS :=
 
 .PHONY: all clean
