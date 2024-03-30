@@ -6,4 +6,6 @@ In the future, I'd like to make this more intuitive to use and add more features
 
 ## Usage
 
+Download the latest release of this program from [Releases](https://github.com/SunOfLife1/Pokemon-Soothing-Silver-Shiny-Rate-Modifier/releases).
+
 Drag and drop your Pokemon Soothing Silver v1.3.2 file onto ShinyModifier.exe and follow the prompts.
