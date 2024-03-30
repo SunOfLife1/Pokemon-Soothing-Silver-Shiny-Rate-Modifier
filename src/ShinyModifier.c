@@ -14,14 +14,20 @@
 // Offset of the shiny value in Soothing Silver v1.3.2
 #define OFFSET 0x558EB
 
+int printCloseWindow()
+{
+    printf("\nPress ENTER to close this window.\n");
+    getchar();
+    return 0;
+}
+
 int main(int argc, char **argv)
 {
     // If there is no command line input, print a usage message and exit
     if (argc <= 1)
     {
-        printf("Drag and drop your ROM onto this .exe file and try again.\n\n");
-        printf("Press ENTER to close this window.\n");
-        getchar();
+        printf("Drag and drop your ROM onto this .exe file and try again.\n");
+        printCloseWindow();
         return 0;
     }
 
@@ -31,10 +37,8 @@ int main(int argc, char **argv)
     // If opening the file somehow doesn't work, exit
     if (rom == NULL)
     {
-        printf("The inputted location is invalid. I'm honestly not sure how you got this error.\n\n");
-        printf("Press ENTER to close this window.\n");
-        getchar();
-        return 0;
+        printf("The inputted location is invalid. I'm honestly not sure how you got this error.\n");
+        return printCloseWindow();
     }
 
     // Ask the user for the output filename
@@ -49,27 +53,26 @@ int main(int argc, char **argv)
         printf("DEBUG - Output ROM location: %s\n", outFilename);
     }
 
-    // Explain how the shiny rates work and ask the user for a new shiny rate
+    // Explain how the shiny rates work
     printf("\nThe shiny rate is XX/65536. In base HGSS, XX is 8. In Soothing Silver, XX is 32.\n");
-    printf("The highest possible value for XX is 255, resulting in a shiny rate of about 1/257.\n");
+    printf("The highest possible value for XX is 255, resulting in a shiny rate of about 1/257.\n\n");
+
+    // Ask the user for a new shiny value
     int newShinyValue = -1;
     while (newShinyValue < 0 || newShinyValue > 255)
     {
-        printf("\nWhat would you like XX to be? (must be at least 0 and at most 255)\n> ");
+        printf("What would you like XX to be? (must be at least 0 and at most 255)\n> ");
         char input[256];
         fgets(input, 256, stdin);
-        int result = sscanf(input, "%d", &newShinyValue);
+        sscanf(input, "%d", &newShinyValue);
 
         if (DEBUG)
-        {
-            printf("\nDEBUG - Values read: %d\n", result);
-            printf("DEBUG - Current newShinyValue: %d\n", newShinyValue);
-        }
+            printf("\nDEBUG - Current newShinyValue: %d\n", newShinyValue);
     }
 
     // Calculate the size of the ROM file
     fseek(rom, 0, SEEK_END);
-    int filesize = ftell(rom);
+    long filesize = ftell(rom);
 
     // Copy the contents of the ROM file to a new file
     unsigned char *filecopy = malloc(filesize);
@@ -87,12 +90,12 @@ int main(int argc, char **argv)
 
     // Save the contents of the new file to the actual file
     FILE *newRom = fopen(outFilename, "wb");
-    int result = fwrite(filecopy, 1, filesize, newRom);
+    long result = fwrite(filecopy, 1, filesize, newRom);
 
     if (DEBUG)
     {
-        printf("\nDEBUG - Bytes read: %d\n", filesize);
-        printf("DEBUG - Bytes wrote: %d\n", result);
+        printf("\nDEBUG - Bytes read: %ld\n", filesize);
+        printf("DEBUG - Bytes wrote: %ld\n", result);
     }
 
     // Print whether the write was successful or not
@@ -113,7 +116,5 @@ int main(int argc, char **argv)
     fclose(newRom);
     free(filecopy);
 
-    printf("\nPress ENTER to close this window.\n");
-    getchar();
-    return 0;
+    return printCloseWindow();
 }
