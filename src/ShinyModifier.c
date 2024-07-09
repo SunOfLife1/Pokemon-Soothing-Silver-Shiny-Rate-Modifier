@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
+#include "CLIHelper.h"
 
 // If debug macro is 1, program will print more details
 #define DEBUG 0
@@ -44,38 +45,13 @@ bool fileExists(const char *filename)
     return true;
 }
 
-int printCloseWindow()
-{
-    printf("\nPress ENTER to close this window.\n");
-    getchar();
-    return 0;
-}
-
-bool promptToContinue(const char *msg)
-{
-    printf("\n%s ", msg);
-    while (true)
-    {
-        printf("Continue anyway? (Y/N)\n> ");
-
-        char input[256];
-        fgets(input, 256, stdin);
-
-        if (!strncasecmp(input, "Y", 1))
-            return true;
-        else if (!strncasecmp(input, "N", 1))
-            return false;
-    }
-}
-
 int main(int argc, char **argv)
 {
     // If there is no command line input, print a usage message and exit
     if (argc <= 1)
     {
         printf("Drag and drop your ROM onto this .exe file and try again.\n");
-        printCloseWindow();
-        return 0;
+        return enterToClose();
     }
 
     // Try to open the ROM for read only
@@ -85,7 +61,7 @@ int main(int argc, char **argv)
     if (rom == NULL)
     {
         printf("The inputted location is invalid. I'm honestly not sure how you got this error.\n");
-        return printCloseWindow();
+        return enterToClose();
     }
 
     // Ask the user for the output filename
@@ -99,11 +75,11 @@ int main(int argc, char **argv)
 
     // Check that file already exists
     if (fileExists(outFilename) && !promptToContinue("Output file exists already."))
-        return printCloseWindow();
+        return enterToClose();
 
     // Check that file extension is correct
     if (!hasExtension(outFilename, ".nds") && !promptToContinue("Output filename does not end in \".nds\"."))
-        return printCloseWindow();
+        return enterToClose();
 
     if (DEBUG)
     {
@@ -174,5 +150,5 @@ int main(int argc, char **argv)
     fclose(newRom);
     free(filecopy);
 
-    return printCloseWindow();
+    return enterToClose();
 }
