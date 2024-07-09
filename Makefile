@@ -27,6 +27,6 @@ $(OBJ_DIR):
 	mkdir $@
 
 clean:
-	del /q $(OBJ_DIR) $(EXE)
+	rm -rf $(OBJ_DIR) $(EXE)
 
 -include $(OBJ:.o=.d)
