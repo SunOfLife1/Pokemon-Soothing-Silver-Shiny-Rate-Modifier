@@ -25,13 +25,6 @@ bool hasExtension(const char *filename, const char *ext)
     if (!actualExt)
         return false;
 
-    if (DEBUG)
-    {
-        printf("\nDEBUG - filename = %s\n", filename);
-        printf("DEBUG - ext = %s\n", ext);
-        printf("DEBUG - actualExt = %s\n", actualExt);
-    }
-
     return !strncmp(actualExt, ext, strlen(ext));
 }
 
@@ -56,6 +49,8 @@ int main(int argc, char **argv)
 
     // Try to open the ROM for read only
     FILE *rom = fopen(argv[1], "rb");
+    if (DEBUG)
+        printf("\nDEBUG - Input ROM location: %s\n", argv[1]);
 
     // If opening the file somehow doesn't work, exit
     if (rom == NULL)
@@ -82,10 +77,7 @@ int main(int argc, char **argv)
         return enterToClose();
 
     if (DEBUG)
-    {
-        printf("\nDEBUG - Input ROM location: %s\n", argv[1]);
-        printf("DEBUG - Output ROM location: %s\n", outFilename);
-    }
+        printf("\nDEBUG - Output ROM location: %s\n", outFilename);
 
     // Explain how the shiny rates work
     printf("\nThe shiny rate is XX/65536. In base HGSS, XX is 8. In Soothing Silver, XX is 32.\n");
