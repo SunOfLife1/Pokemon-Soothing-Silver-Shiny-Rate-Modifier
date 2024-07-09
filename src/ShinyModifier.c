@@ -13,6 +13,8 @@
 
 // If debug macro is 1, program will print more details
 #define DEBUG 0
+// If simplified macro is 1, program will default to max shiny rate and basic output filename
+#define SIMPLIFIED 0
 // Offset of the shiny value in Soothing Silver v1.3.2
 #define OFFSET 0x558EB
 
@@ -59,13 +61,24 @@ int main(int argc, char **argv)
         return enterToClose();
     }
 
-    // Ask the user for the output filename
     char outFilename[256];
-    while (strlen(outFilename) == 0)
+    if (!SIMPLIFIED)
     {
-        printf("Enter the name of the output file.\n> ");
-        fgets(outFilename, 256, stdin);
-        outFilename[strcspn(outFilename, "\n")] = 0; // remove end of string newline
+        // Ask the user for the output filename
+        while (strlen(outFilename) == 0)
+        {
+            printf("Enter the name of the output file.\n> ");
+            fgets(outFilename, 256, stdin);
+            outFilename[strcspn(outFilename, "\n")] = 0; // remove end of string newline
+        }
+    }
+    else
+    {
+        // Create the output filename
+        char *ext = strrchr(argv[1], '.');
+        *ext = '\0'; // separate file name and extension
+        ext++;
+        snprintf(outFilename, 256, "%s (Max Shiny Odds).%s", argv[1], ext);
     }
 
     // Check that file already exists
@@ -80,20 +93,26 @@ int main(int argc, char **argv)
         printf("\nDEBUG - Output ROM location: %s\n", outFilename);
 
     // Explain how the shiny rates work
-    printf("\nThe shiny rate is XX/65536. In base HGSS, XX is 8. In Soothing Silver, XX is 32.\n");
-    printf("The highest possible value for XX is 255, resulting in a shiny rate of about 1/257.\n\n");
-
-    // Ask the user for a new shiny value
-    int newShinyValue = -1;
-    while (newShinyValue < 0 || newShinyValue > 255)
+    if (!SIMPLIFIED)
     {
-        printf("What would you like XX to be? (must be at least 0 and at most 255)\n> ");
-        char input[256];
-        fgets(input, 256, stdin);
-        sscanf(input, "%d", &newShinyValue);
+        printf("\nThe shiny rate is XX/65536. In base HGSS, XX is 8. In Soothing Silver, XX is 32.\n");
+        printf("The highest possible value for XX is 255, resulting in a shiny rate of about 1/257.\n\n");
+    }
 
-        if (DEBUG)
-            printf("\nDEBUG - Current newShinyValue: %d\n", newShinyValue);
+    int newShinyValue = 255;
+    if (!SIMPLIFIED)
+    {
+        // Ask the user for a new shiny value
+        do
+        {
+            printf("What would you like XX to be? (must be at least 0 and at most 255)\n> ");
+            char input[256];
+            fgets(input, 256, stdin);
+            sscanf(input, "%d", &newShinyValue);
+
+            if (DEBUG)
+                printf("\nDEBUG - Current newShinyValue: %d\n", newShinyValue);
+        } while (newShinyValue < 0 || newShinyValue > 255);
     }
 
     // Calculate the size of the ROM file
@@ -127,7 +146,13 @@ int main(int argc, char **argv)
     // Print whether the write was successful or not
     if (result == filesize)
     {
-        printf("\nFile saved!\n");
+        if (!SIMPLIFIED)
+            printf("\nFile saved!\n");
+        else
+        {
+            printf("\nNew Shiny Rate: 1/257\n");
+            printf("\nFile saved to \"%s\"\n", outFilename);
+        }
     }
     else
     {
