@@ -18,29 +18,26 @@
 // Offset of the shiny value in Soothing Silver v1.3.2
 #define OFFSET 0x558EB
 
-bool hasExtension(const char *filename, const char *ext)
+bool hasExtension(const char* filename, const char* ext)
 {
-    if (!filename || !ext)
-        return false;
+    if (!filename || !ext) return false;
 
-    const char *actualExt = strrchr(filename, '.');
-    if (!actualExt)
-        return false;
+    const char* actualExt = strrchr(filename, '.');
+    if (!actualExt) return false;
 
     return !strncmp(actualExt, ext, strlen(ext));
 }
 
-bool fileExists(const char *filename)
+bool fileExists(const char* filename)
 {
-    FILE *fp = fopen(filename, "rb");
-    if (fp == NULL)
-        return false;
+    FILE* fp = fopen(filename, "rb");
+    if (fp == NULL) return false;
 
     fclose(fp);
     return true;
 }
 
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
     // If there is no command line input, print a usage message and exit
     if (argc <= 1)
@@ -50,9 +47,8 @@ int main(int argc, char **argv)
     }
 
     // Try to open the ROM for read only
-    FILE *rom = fopen(argv[1], "rb");
-    if (DEBUG)
-        printf("\nDEBUG - Input ROM location: %s\n", argv[1]);
+    FILE* rom = fopen(argv[1], "rb");
+    DEBUG_PRINT("\nDEBUG - Input ROM location: %s\n", argv[1]);
 
     // If opening the file somehow doesn't work, exit
     if (rom == NULL)
@@ -75,7 +71,7 @@ int main(int argc, char **argv)
     else
     {
         // Create the output filename
-        char *ext = strrchr(argv[1], '.');
+        char* ext = strrchr(argv[1], '.');
         *ext = '\0'; // separate file name and extension
         ext++;
         snprintf(outFilename, 256, "%s (Max Shiny Odds).%s", argv[1], ext);
@@ -120,7 +116,7 @@ int main(int argc, char **argv)
     long filesize = ftell(rom);
 
     // Copy the contents of the ROM file to a new file
-    unsigned char *filecopy = malloc(filesize);
+    unsigned char* filecopy = malloc(filesize);
     fseek(rom, 0, SEEK_SET);
     fread(filecopy, 1, filesize, rom);
 
@@ -134,7 +130,7 @@ int main(int argc, char **argv)
         printf("DEBUG - New shiny value: 0x%02X\n", filecopy[OFFSET]);
 
     // Save the contents of the new file to the actual file
-    FILE *newRom = fopen(outFilename, "wb");
+    FILE* newRom = fopen(outFilename, "wb");
     long result = fwrite(filecopy, 1, filesize, newRom);
 
     if (DEBUG)

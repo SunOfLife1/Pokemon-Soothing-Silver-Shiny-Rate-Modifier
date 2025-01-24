@@ -7,7 +7,6 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
-
 #include "CLIHelper.h"
 
 int enterToClose()
@@ -17,7 +16,7 @@ int enterToClose()
     return 0;
 }
 
-bool promptToContinue(const char *msg)
+bool promptToContinue(const char* msg)
 {
     printf("\n%s ", msg);
     while (true)
