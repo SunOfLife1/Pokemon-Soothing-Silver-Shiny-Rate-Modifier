@@ -15,8 +15,8 @@
 #define DEBUG 0
 // If simplified macro is 1, program will default to max shiny rate and basic output filename
 #define SIMPLIFIED 0
-// Offset of the shiny value in Soothing Silver v1.3.2
-#define OFFSET 0x558EB
+// Offset of the shiny value in Soothing Silver v1.4
+#define OFFSET 0x74080
 
 bool hasExtension(const char* filename, const char* ext)
 {
